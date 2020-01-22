@@ -6,7 +6,6 @@ int PalCheck(char* arr, int num)//자료형 확인 잘하자!!
 	{
 		if (arr[i] != arr[end])
 		{
-			printf("%d,%d", i, end);
 			check = 1;
 			break;
 		}
