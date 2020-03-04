@@ -1,26 +1,32 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
-
 int main(void)
 {
-	int num = 0 , i = 0 , j = 0;
 	int* arr = (int*)malloc(sizeof(int) * 5);
-	while (num != -1)
+	int num;
+	int i = 0;
+	int j = 5;
+	while (1)
 	{
-		scanf("%d", &num);
-		getchar();
-		*(arr + i) = num;
-		i++;
-		if (i > 4 + j)
+		if (i >= j)
 		{
-			arr = (int*)realloc(arr, sizeof(int) * 3);
 			j += 3;
+			arr = (int*)realloc(arr,sizeof(int) * j);
+			
 		}
+		scanf("%d", &num);
+		if (num == -1)
+		{
+			break;
+		}
+		arr[i] = num;
+		i++;
 	}
-	for (i = 0; i < j; i++)
+	for (j = 0; j < i; j++)
 	{
-		printf("%d", arr[i]);
+		printf("%d", arr[j]);
 	}
 	free(arr);
 	return 0;
 }
+	
