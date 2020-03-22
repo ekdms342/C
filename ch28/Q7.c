@@ -79,11 +79,34 @@ void PrintAll(Person** ps, int index)
 	}
 }
 
+void FileWrite(FILE* wfp, Person** psarr,int index)
+{
+	int i;
+	for (i = 0; i < index; i++)
+	{
+		fprintf(wfp, "%s %s ", psarr[i]->name, psarr[i]->tell);
+	}
+}
+
 int main(void)
 {
+	FILE* rfp = fopen("number.txt", "rt");
 	Person** psarr = (Person**)malloc(sizeof(Person*));
 	int choose = 0;
 	int index = 0;
+	while (1)
+	{
+		if (feof(rfp) != 0)
+		{
+			break;
+		}
+		psarr[index] = (Person*)malloc(sizeof(Person));
+		fscanf(rfp, "%s %s ", psarr[index]->name, psarr[index]->tell);
+		index++;
+		psarr = realloc(psarr, sizeof(Person*) * (index + 1));
+	}
+	
+	int j;
 	while (choose != 5)
 	{
 		puts("**** MANU ****");
@@ -124,5 +147,15 @@ int main(void)
 		}
 
 	}
+	FILE* wfp = fopen("number.txt", "wt");
+	FileWrite(wfp,psarr,index);
+	fclose(wfp);
+	fclose(rfp);
+	
+	for (j = 0; j < index; j++)
+	{
+		free(psarr[j]);
+	}
+	free(psarr);
 	return 0;
 }
