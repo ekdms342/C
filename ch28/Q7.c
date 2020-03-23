@@ -18,11 +18,12 @@ void Insert(Person* ps)
 	printf("		Data Inserted \n");
 }
 
-void Delete(Person** ps, int index)
+int Delete(Person** ps, int index)
 {
 	char name[20];
 	int j;
-	int deleteindex = 0;
+	int deleteindex = -1;
+
 	puts("[DELETE]");
 	scanf("%s", name);
 	for (j = 0; j < index; j++)
@@ -31,20 +32,23 @@ void Delete(Person** ps, int index)
 		{
 			free(ps[j]);
 			deleteindex = j;
+
 		}
 	}
-	if (deleteindex == 0)
+	if (deleteindex == -1)
 	{
 		puts("No data entered");
 	}
 	else
 	{
 		puts("successful data deletion");
-		for (j = deleteindex; j < index; j++)
+		for (j = deleteindex; j < index - 1; j++)
 		{
 			ps[j] = ps[j + 1];
 		}
+		index--;
 	}
+	return index;
 }
 
 void Search(Person** ps, int index)
@@ -79,7 +83,7 @@ void PrintAll(Person** ps, int index)
 	}
 }
 
-void FileWrite(FILE* wfp, Person** psarr,int index)
+void FileWrite(FILE* wfp, Person** psarr, int index)
 {
 	int i;
 	for (i = 0; i < index; i++)
@@ -88,11 +92,9 @@ void FileWrite(FILE* wfp, Person** psarr,int index)
 	}
 }
 
-int main(void)
+int Fileread (FILE* rfp, Person*** psarr1)//포인터 call_by_reference
 {
-	FILE* rfp = fopen("number.txt", "rt");
-	Person** psarr = (Person**)malloc(sizeof(Person*));
-	int choose = 0;
+	Person** psarr = *psarr1;
 	int index = 0;
 	while (1)
 	{
@@ -105,7 +107,15 @@ int main(void)
 		index++;
 		psarr = realloc(psarr, sizeof(Person*) * (index + 1));
 	}
-	
+	*psarr1 = psarr;
+	return index;
+}
+int main(void)
+{
+	FILE* rfp = fopen("number.txt", "rt");
+	Person** psarr = (Person**)malloc(sizeof(Person*));
+	int choose = -1;
+	int index = Fileread(rfp,&psarr);
 	int j;
 	while (choose != 5)
 	{
@@ -117,6 +127,7 @@ int main(void)
 		puts("5. Exit");
 		printf("choose the item: ");
 		scanf("%d", &choose);
+		while (getchar() != '\n');
 		if (choose == 1)
 		{
 			psarr[index] = (Person*)malloc(sizeof(Person));
@@ -129,8 +140,8 @@ int main(void)
 		}
 		else if (choose == 2)
 		{
-			Delete(psarr, index);
-			index--;
+			index = Delete(psarr, index);
+
 			psarr = realloc(psarr, sizeof(Person*) * (index + 1));
 		}
 		else if (choose == 3)
@@ -141,6 +152,11 @@ int main(void)
 		{
 			PrintAll(psarr, index);
 		}
+		else if(choose == -1)
+		{
+			puts("다시고르시오");
+			continue;
+		}
 		else
 		{
 			continue;
@@ -148,10 +164,10 @@ int main(void)
 
 	}
 	FILE* wfp = fopen("number.txt", "wt");
-	FileWrite(wfp,psarr,index);
+	FileWrite(wfp, psarr, index);
 	fclose(wfp);
 	fclose(rfp);
-	
+
 	for (j = 0; j < index; j++)
 	{
 		free(psarr[j]);
